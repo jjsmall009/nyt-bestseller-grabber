@@ -6,3 +6,6 @@ This program (well, script) will grab and format data from the NYT API to create
 - [] Look up best readme practices
 - [] Start new branch for configuration file based development
 - [] Stress over which Excel library to use (Pandas, Openpyxl, XLSXWriter, etc)
+
+## Sample Output
+![Sample output](info/sample_output.png)
