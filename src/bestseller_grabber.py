@@ -2,7 +2,7 @@
 """New York Times Bestsellers List Grabber
 
 Author: JJ Small
-Date: 9/6/21
+Date: September 2021
 Company: Anacortes Public Library
 
 This script will create an excel spreadsheet for the sole purpose of printing out and displaying
@@ -19,7 +19,7 @@ from io import BytesIO
 from requests import get
 
 # Specific to jjsmall009 NYT API account
-API_KEY = "gibberish"
+API_KEY = "KEzN2M0D2fXgCXhzVr90KtreK1xAKGcF"
 API_URL = "https://api.nytimes.com/svc/books/v3/"
 DATE = datetime.today()
  
@@ -56,12 +56,7 @@ def get_list_data(book_url):
         print("Finished grabbing data....")
         return final_data
 
-def create_spreadsheet(file_name):
-    
-    bold = wb.add_format({"bold": True})
-
-    return wb
-
+        
 def update_spreadsheet(book_data, sheet):
     """
     Update the specified sheet with the new data we get from the list API. Basically it
