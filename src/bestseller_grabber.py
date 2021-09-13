@@ -17,10 +17,17 @@ from xlsxwriter import Workbook
 from datetime import datetime
 from io import BytesIO
 from requests import get
+import configparser
 
-# Specific to jjsmall009 NYT API account
-API_KEY = "KEzN2M0D2fXgCXhzVr90KtreK1xAKGcF"
-API_URL = "https://api.nytimes.com/svc/books/v3/"
+# Grab the data from our config file
+config = configparser.ConfigParser()
+config.read("config/config.ini")
+api_data = config["API"]
+general_data = config["GENERAL"]
+lists_data = config["LISTS"]
+
+API_KEY = api_data["API-KEY"]
+API_URL = "https://api.nytimes.com/svc/books/v3/lists/current"
 DATE = datetime.today()
  
 def get_list_data(book_url):
@@ -77,14 +84,14 @@ def update_spreadsheet(book_data, sheet):
     sheet.merge_range("A1:S1", "")
     header_bold = wb.add_format({
         "font_name": "Cooper Hewitt Book",
-        "font_size": 28,
+        "font_size": 36,
         "font_color": "#44546A",
         "bold": True
     })
 
     header_style = wb.add_format({
         "font_name": "Cooper Hewitt Book",
-        "font_size": 28,
+        "font_size": 36,
         "font_color": "#44546A"
     })
     sheet.write_rich_string(
@@ -92,7 +99,7 @@ def update_spreadsheet(book_data, sheet):
         header_bold,
         "BEST SELLERS",
         header_style,
-        " In the Anacortes Public Library Collection")
+        f" In the {general_data['ORGANIZATION']} Collection")
 
     # Add second row with current date
     sheet.set_row(1, height=95)
@@ -106,7 +113,7 @@ def update_spreadsheet(book_data, sheet):
     })
     sheet.write(
         "A2", 
-        f"The New York Times - Hardcover {sheet.get_name()} - {DATE.strftime('%B %d, %Y')}",
+        f"The New York Times - {sheet.get_name()} - {DATE.strftime('%B %d, %Y')}",
         date_header)
 
     # For each book in our list, add in the data to the proper cells and format accordingly
@@ -152,21 +159,31 @@ def update_spreadsheet(book_data, sheet):
     print("Finished processing data...")
         
 
-# Craft our endpoints
-fiction_endpoint = f"{API_URL}lists/current/hardcover-fiction.json?api-key={API_KEY}"
-non_endpoint = f"{API_URL}lists/current/hardcover-nonfiction.json?api-key={API_KEY}"
-
-# Get and process all of the data and do the stuff
-fiction_data = get_list_data(fiction_endpoint)
-non_data = get_list_data(non_endpoint)
-
 # Open up our template spreadsheet and update it with the current list of bestsellers
 new_file = f"results/{DATE.strftime('%B %d')} New York Bestsellers.xlsx"
 wb = Workbook(new_file)
-f_sheet = wb.add_worksheet("Fiction")
-nf_sheet = wb.add_worksheet("Nonfiction")
 
-update_spreadsheet(fiction_data, f_sheet)
-update_spreadsheet(non_data, nf_sheet)
+# Loop through our possible lists, grab the data, and create a sheet
+for list in lists_data:
+    if lists_data[list] == "Yes":
+        url = f"{API_URL}/{list}.json?api-key={API_KEY}"
+        data = get_list_data(url)
+
+        sheet = wb.add_worksheet(' '.join(list.split("-")).title())
+        update_spreadsheet(data, sheet)
+
+# # Craft our endpoints
+# fiction_endpoint = f"{API_URL}lists/current/hardcover-fiction.json?api-key={API_KEY}"
+# non_endpoint = f"{API_URL}lists/current/hardcover-nonfiction.json?api-key={API_KEY}"
+
+# # Get and process all of the data and do the stuff
+# fiction_data = get_list_data(fiction_endpoint)
+# non_data = get_list_data(non_endpoint)
+
+# f_sheet = wb.add_worksheet("Fiction")
+# nf_sheet = wb.add_worksheet("Nonfiction")
+
+# update_spreadsheet(fiction_data, f_sheet)
+# update_spreadsheet(non_data, nf_sheet)
 
 wb.close()
