@@ -6,10 +6,10 @@ Date: September 2021
 Company: Anacortes Public Library
 
 This script will create an excel spreadsheet for the sole purpose of printing out and displaying
-in the library. As of now it only processes fiction and nonfiction data.
+in the library. Using a config file it will create sheets for each desired list type.
 
-Using the NYT API we grab data from certain endpoints and update a template excel file with the 
-current NYT bestseller information. If you're reading this then I must be dead...
+Using the NYT API we grab data for a certain type of book (hardcover fiction, papertrade, etc) and
+then format a sheet of that data. If you're reading this than I am dead...
 """
 #################################################################################################
 
@@ -18,6 +18,7 @@ from datetime import datetime
 from io import BytesIO
 from requests import get
 import configparser
+
 
 # Grab the data from our config file
 config = configparser.ConfigParser()
@@ -28,7 +29,8 @@ lists_data = config["LISTS"]
 
 API_KEY = api_data["API-KEY"]
 API_URL = "https://api.nytimes.com/svc/books/v3/lists/current"
-DATE = datetime.today()
+DATE = ""
+
  
 def get_list_data(book_url):
     """
@@ -46,7 +48,11 @@ def get_list_data(book_url):
 
     try:
         print("Attempting to grab data from the NYT API...")
-        data = request.json()["results"]["books"]
+        all_data = request.json()
+        data = all_data["results"]["books"]
+        global DATE
+        DATE = all_data["results"]["published_date"]
+
     except KeyError as e:
         # If for some reason we get data back that isn't in the correct format we'll crash
         print("Oops... the data isn't correct. Use the correct book type")
@@ -74,9 +80,10 @@ def update_spreadsheet(book_data, sheet):
         sheet_name (sheet): The sheet object (Fiction, etc.)
     """
 
-    print(f"Processing {sheet} data.......")
+    print(f"Processing {sheet.get_name()} data.......")
     sheet.set_column(0,0, width=16.25)
     sheet.set_column(16,16, width=14.2)
+    sheet.set_column(2, 2, width=25)
     merge_format = wb.add_format({"valign": "vcenter", "text_wrap": True})
 
     # Add first row header
@@ -106,14 +113,14 @@ def update_spreadsheet(book_data, sheet):
     sheet.merge_range("A2:Q2", "")
     date_header = wb.add_format({
         "font_name": "Cooper Hewitt Book",
-        "font_size": 22,
+        "font_size": 26,
         "font_color": "#4472C4",
         "align": "center",
         "valign": "vcenter"
     })
     sheet.write(
         "A2", 
-        f"The New York Times - {sheet.get_name()} - {DATE.strftime('%B %d, %Y')}",
+        f"The New York Times - {sheet.get_name()} - {datetime.strptime(DATE, '%Y-%m-%d').strftime('%B %d, %Y')}",
         date_header)
 
     # For each book in our list, add in the data to the proper cells and format accordingly
@@ -160,7 +167,7 @@ def update_spreadsheet(book_data, sheet):
         
 
 # Open up our template spreadsheet and update it with the current list of bestsellers
-new_file = f"results/{DATE.strftime('%B %d')} New York Bestsellers.xlsx"
+new_file = f"results/{datetime.today().strftime('%B %d')} New York Bestsellers.xlsx"
 wb = Workbook(new_file)
 
 # Loop through our possible lists, grab the data, and create a sheet
@@ -168,7 +175,6 @@ for list in lists_data:
     if lists_data[list] == "Yes":
         url = f"{API_URL}/{list}.json?api-key={API_KEY}"
         data = get_list_data(url)
-
         sheet = wb.add_worksheet(' '.join(list.split("-")).title())
         update_spreadsheet(data, sheet)
 
