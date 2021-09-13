@@ -14,14 +14,16 @@ then format a sheet of that data. If you're reading this than I am dead...
 #################################################################################################
 
 from xlsxwriter import Workbook
+from xlsxwriter.exceptions import FileCreateError
 from datetime import datetime
 from io import BytesIO
 from requests import get
-import configparser
+from configparser import ConfigParser
+from os import makedirs
 
 
 # Grab the data from our config file
-config = configparser.ConfigParser()
+config = ConfigParser()
 config.read("config/config.ini")
 api_data = config["API"]
 general_data = config["GENERAL"]
@@ -175,21 +177,15 @@ for list in lists_data:
     if lists_data[list] == "Yes":
         url = f"{API_URL}/{list}.json?api-key={API_KEY}"
         data = get_list_data(url)
+
+        # Do some sheet fancyfication
         sheet = wb.add_worksheet(' '.join(list.split("-")).title())
+        sheet.set_paper(5)
+        sheet.set_print_scale(44)
         update_spreadsheet(data, sheet)
 
-# # Craft our endpoints
-# fiction_endpoint = f"{API_URL}lists/current/hardcover-fiction.json?api-key={API_KEY}"
-# non_endpoint = f"{API_URL}lists/current/hardcover-nonfiction.json?api-key={API_KEY}"
-
-# # Get and process all of the data and do the stuff
-# fiction_data = get_list_data(fiction_endpoint)
-# non_data = get_list_data(non_endpoint)
-
-# f_sheet = wb.add_worksheet("Fiction")
-# nf_sheet = wb.add_worksheet("Nonfiction")
-
-# update_spreadsheet(fiction_data, f_sheet)
-# update_spreadsheet(non_data, nf_sheet)
-
-wb.close()
+try:
+    wb.close()
+except FileCreateError:
+    makedirs("results")
+    wb.close()
