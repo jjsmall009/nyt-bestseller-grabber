@@ -20,7 +20,7 @@ import requests
 from requests import HTTPError
 
 # Specific to jjsmall009 NYT API account
-API_KEY = "wup3sLrAcPAxjDtA2M4Tnu124slqmeG1"
+API_KEY = "gibberish"
 API_URL = "https://api.nytimes.com/svc/books/v3/"
 DATE = datetime.today()
  
