@@ -2,12 +2,13 @@
 
 This program (well, script) will grab and format data from the NYT API to create a printable spreadsheet of the various lists from said NYT API.
 
+The look and feel and styling of the final Excel spreadsheet is pretty set in stone and hardcoded in.
 
-## To-do
+## Usage
+Take a look at the docs for some basic instructions and notes on how to run things properly.
 
-- Look up best readme practices
-- Start new branch for configuration file based development
-- Stress over which Excel library to use (Pandas, Openpyxl, XLSXWriter, etc)
+## Resources
+Data is pulled from the [New York Times Developer Network](https://developer.nytimes.com/).
 
 ## Sample Output
-![Sample output](info/sample_output.png)
+![Sample output](resources/sample_output.png)

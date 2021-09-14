@@ -1,4 +1,31 @@
+=========================================================
 How to Use
 ==========================================================
+In case I'm not around to troubleshoot anything or fix any bugs, here's some basic instructions.
 
-At some point this file will contain some basic instructions for using this program.
+1. Make sure you have the config file as specified below.
+2. Run the file "bestseller_grabber.exe".
+3. The results are in the results folder.
+
+===
+Configuration
+===
+In order for the program to run correctly you need to have a folder called "config" and in it and
+file called "config.ini". There should be one already there so if there isn't than good luck.
+
+- Values in the config file are case sensitive (Yes/No).
+
+===
+API
+===
+An API is a way of getting data from an external source. I.e. a website that has some data you want.
+
+This program uses data from the New York Times developer API portal (https://developer.nytimes.com/). Create
+an account and setup your own API key if mine stops working.
+
+===
+Contact
+===
+Name:       JJ Small
+Email:      jjsmall009@gmail.com
+Project:    https://github.com/jjsmall009/nyt-bestseller-grabber    
