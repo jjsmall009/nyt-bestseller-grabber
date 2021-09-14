@@ -11,4 +11,4 @@ Take a look at the docs for some basic instructions and notes on how to run thin
 Data is pulled from the [New York Times Developer Network](https://developer.nytimes.com/).
 
 ## Sample Output
-![Sample output](resources/sample_output.png)
+![Sample output](resources/sample_output.PNG)
