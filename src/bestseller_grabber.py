@@ -161,6 +161,8 @@ def update_spreadsheet(book_data, sheet):
             merge_format)
         
         # Add in the image
+        if book[book_image] is None:
+            continue
         r = get(url=book["book_image"])
         url = "google.com"
         image_file = BytesIO(r.content)
