@@ -2,7 +2,7 @@
 """New York Times Bestsellers List Grabber
 
 Author: JJ Small
-Date: September 2021
+Date (Updated): October 2022
 Company: Anacortes Public Library
 
 This script will create an excel spreadsheet for the sole purpose of printing out and displaying
@@ -22,18 +22,6 @@ from configparser import ConfigParser
 from os import makedirs
 
 
-# Grab the data from our config file
-config = ConfigParser()
-config.read("config/config.ini")
-api_data = config["API"]
-general_data = config["GENERAL"]
-lists_data = config["LISTS"]
-
-API_KEY = api_data["API-KEY"]
-API_URL = "https://api.nytimes.com/svc/books/v3/lists/current"
-DATE = ""
-
- 
 def get_list_data(book_url):
     """
     Fetch all book data from the specified url and then grab the data we want from it. 
@@ -170,7 +158,22 @@ def update_spreadsheet(book_data, sheet):
     print("Finished processing data...")
         
 
-# Open up our template spreadsheet and update it with the current list of bestsellers
+"""
+Program entry point.
+
+Determines which lists the user wants to create flyers for and then does the stuff.
+"""
+# Grab the data from our config file
+config = ConfigParser()
+config.read("config/config.ini")
+api_data = config["API"]
+general_data = config["GENERAL"]
+lists_data = config["LISTS"]
+
+API_KEY = api_data["API-KEY"]
+API_URL = "https://api.nytimes.com/svc/books/v3/lists/current"
+DATE = ""
+
 new_file = f"results/{datetime.today().strftime('%B %d')} New York Bestsellers.xlsx"
 wb = Workbook(new_file)
 
