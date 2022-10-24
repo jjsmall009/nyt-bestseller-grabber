@@ -184,7 +184,7 @@ for list in lists_data:
         data = get_list_data(url)
 
         # Do some sheet fancyfication
-        sheet = wb.add_worksheet(' '.join(list.split("-")).title())
+        sheet = wb.add_worksheet(' '.join(list.split("-")).title()[0:29])
         sheet.set_paper(5)
         sheet.set_print_scale(44)
         update_spreadsheet(data, sheet)
