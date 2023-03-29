@@ -163,6 +163,11 @@ Program entry point.
 
 Determines which lists the user wants to create flyers for and then does the stuff.
 """
+# Only continue if it's a Thursday. The NTY list comes out each Thursday morning.
+if datetime.now().weekday() != 3:
+    print("Today is not Thursday. Exiting the script.")
+    quit()
+
 # Grab the data from our config file
 config = ConfigParser()
 config.read("config/config.ini")
